@@ -1,0 +1,3 @@
+Enter ciphertext: Predicted Key: 6
+Decrypted Text: EBIIL TLOIA
+Chi-Square Score: 24.01

@@ -1,0 +1,29 @@
+TC01 - Shift Cipher Encryption
+Input: HELLO WORLD, Key: 3
+Expected: KHOOR ZRUOG
+Result: Pass
+
+TC02 - Shift Cipher Decryption
+Input: KHOOR ZRUOG, Key: 3
+Expected: HELLO WORLD
+Result: Pass
+
+TC03 - Brute Force Attack
+Ciphertext: KHOOR ZRUOG
+Expected: Key 3 gives HELLO WORLD
+Result: Pass
+
+TC04 - Dictionary Scoring
+Ciphertext: KHOOR ZRUOG
+Expected: Predicted Key = 3
+Result: Pass
+
+TC05 - Chi-Square Analysis
+Ciphertext: KHOOR ZRUOG
+Expected: Analyze all 26 keys
+Result: Demonstrated
+
+TC06 - Short Ciphertext Limitation
+Ciphertext: KHOOR ZRUOG
+Observation: Chi-Square may fail on short text
+Result: Limitation observed

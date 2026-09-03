@@ -1,0 +1,3 @@
+Enter ciphertext: Predicted Key: 3
+Decrypted Text: HELLO WORLD
+Dictionary Score: 2
