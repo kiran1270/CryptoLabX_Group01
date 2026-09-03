@@ -1,0 +1,65 @@
+Run started:2026-09-03 18:47:15.569489
+
+Test results:
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: atm.py:6
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+5	def login():
+6	    user_pin = input("Enter PIN: ")
+7	
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: atm.py:23
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+22	
+23	    amount = int(input("Enter withdrawal amount: "))
+24	
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: atm.py:36
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+35	
+36	    amount = int(input("Enter deposit amount: "))
+37	    balance += amount
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: atm.py:46
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+45	
+46	    new_pin = input("Enter new PIN: ")
+47	    pin = new_pin
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: atm.py:64
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+63	
+64	        choice = input("Enter your choice: ")
+65	
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 58
+	Total lines skipped (#nosec): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0.0
+		Low: 0.0
+		Medium: 0.0
+		High: 5.0
+	Total issues (by confidence):
+		Undefined: 0.0
+		Low: 0.0
+		Medium: 0.0
+		High: 5.0
+Files skipped (0):

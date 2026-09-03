@@ -1,0 +1,34 @@
+TC01 - Valid PIN
+Input: 1234
+Expected: Login successful
+Result: Pass
+
+TC02 - Invalid PIN
+Input: 1111
+Expected: Invalid PIN
+Result: Pass
+
+TC03 - Balance Inquiry
+Input: 1
+Expected: Current balance displayed
+Result: Pass
+
+TC04 - Valid Withdrawal
+Input: 200
+Expected: Withdrawal successful and balance reduced
+Result: Pass
+
+TC05 - Insufficient Balance
+Input: Amount greater than balance
+Expected: Insufficient balance
+Result: Pass
+
+TC06 - Deposit
+Input: 500
+Expected: Balance increased by 500
+Result: Pass
+
+TC07 - PIN Change
+Input: New PIN
+Expected: PIN changed successfully
+Result: Pass
