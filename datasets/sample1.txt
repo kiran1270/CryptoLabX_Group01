@@ -1,0 +1,1 @@
+Cryptography is the study of secure communication and data protection.
