@@ -1,0 +1,260 @@
+Script started on 2026-09-03 18:36:12+00:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="75" LINES="38"]
+[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mnano program.py[27mnano program.py
+[?2004l[?2004h[?1049h[22;0;0t[1;38r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[36;32H(B[0;7m[ New File ](B[m[H(B[0;7m  GNU nano 7.2                     program.py                              [1;74H(B[m[37d(B[0;7m^G(B[m Help[37;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[37;61H(B[0;7m^T(B[m Execute[38d(B[0;7m^X(B[m Exit[38;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify[2d[?12l[?25h[?25l[36d[K[1;47H(B[0;7m*[74G(B[m[3d(B[0;1m[36mdef[34m main[39m(B[m():[4;5Huser = input((B[0;1m[32m"Username: "[39m(B[m)[5;5Hpwd = input((B[0;1m[32m"Password: "[39m(B[m)[7;5H(B[0;1m[36mif[39m(B[m check_user(user, pwd):[8;9Hprint((B[0;1m[32m"Login successful"[39m(B[m)[9;5H(B[0;1m[36melse[39m(B[m:[10dprint((B[0;1m[32m"Login failed"[39m(B[m)[12;5Hcommand = input((B[0;1m[32m"Enter command: "[39m(B[m)[13;5Hrun_command(command)[15;5Hprint((B[0;1m[32m"Password hash:"[39m(B[m, hash_password(pwd))[18d(B[0;1m[36mif[39m(B[m __name__ == (B[0;1m[32m"__main__"[39m(B[m:[19;5Hmain()[?12l[?25h[?25l[37;16H   (B[0;7mM-D(B[m DOS Format    (B[0;7mM-A(B[m Append        (B[0;7mM-B(B[m Backup File[K[38;2H(B[0;7mC(B[m Cancel[16G   (B[0;7mM-M(B[m Mac Format    (B[0;7mM-P(B[m Prepend       (B[0;7m^T(B[m Browse[K[36d(B[0;7mFile Name to Write: program.py                                             [36;31H(B[m[?12l[?25h[?25l[1K (B[0;7m[ Writing... ](B[m[K[1;47H(B[0;7m [74G(B[m[36;29H(B[0;7m[ Wrote 38 lines ](B[m[37;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut         (B[0;7m^T(B[m Execute[38;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste       (B[0;7m^J(B[m Justify[?12l[?25h[19;11H[?25l[36d[J[38d[?12l[?25h[38;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mbandit -r program.p[27m[7my[27m[A]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ bandit -r program.py
+[?2004l[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.3
+[node_visitor]	INFO	Unable to find qualified name for module: program.py
+[95mRun started:2026-09-03 18:36:49.451484[0m
+[95m
+Test results:[0m
+[94m>> Issue: [B404:blacklist] Consider possible security implications associated with subprocess module.
+   Severity: Low   Confidence: High
+   Location: program.py:2
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_imports.html#b404-import-subprocess[0m
+1	import os
+2	import subprocess
+3	import hashlib
+
+--------------------------------------------------
+[91m>> Issue: [B605:start_process_with_a_shell] Starting a process with a shell, possible injection detected, security issue.
+   Severity: High   Confidence: High
+   Location: program.py:14
+   More Info: https://bandit.readthedocs.io/en/latest/plugins/b605_start_process_with_a_shell.html[0m
+13	def run_command(command):
+14	    os.system(command)
+15	
+
+--------------------------------------------------
+[91m>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+   Location: program.py:17
+   More Info: https://bandit.readthedocs.io/en/latest/plugins/b602_subprocess_popen_with_shell_equals_true.html[0m
+16	def execute_command(command):
+17	    subprocess.call(command, shell=True)
+18	
+
+--------------------------------------------------
+[93m>> Issue: [B303:blacklist] Use of insecure MD2, MD4, MD5, or SHA1 hash function.
+   Severity: Medium   Confidence: High
+   Location: program.py:20
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b303-md5[0m
+19	def hash_password(password):
+20	    return hashlib.md5(password.encode()).hexdigest()
+21	
+
+--------------------------------------------------
+[91m>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: program.py:23
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input[0m
+22	def main():
+23	    user = input("Username: ")
+24	    pwd = input("Password: ")
+
+--------------------------------------------------
+[91m>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: program.py:24
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input[0m
+23	    user = input("Username: ")
+24	    pwd = input("Password: ")
+25	
+
+--------------------------------------------------
+[91m>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: program.py:31
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input[0m
+30	
+31	    command = input("Enter command: ")
+32	    run_command(command)
+
+--------------------------------------------------
+[95m
+Code scanned:[0m
+	Total lines of code: 27
+	Total lines skipped (#nosec): 0
+[95m
+Run metrics:[0m
+	Total issues (by severity):
+		Undefined: 0.0
+		Low: 1.0
+		Medium: 1.0
+		High: 5.0
+	Total issues (by confidence):
+		Undefined: 0.0
+		Low: 0.0
+		Medium: 0.0
+		High: 7.0
+[95mFiles skipped (0):[0m
+[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mcat program.py[27mcat program.py
+[?2004limport os
+import subprocess
+import hashlib
+
+username = "admin"
+password = "admin123"
+
+def check_user(user, pwd):
+    if user == username and pwd == password:
+        return True
+    return False
+
+def run_command(command):
+    os.system(command)
+
+def execute_command(command):
+    subprocess.call(command, shell=True)
+
+def hash_password(password):
+    return hashlib.md5(password.encode()).hexdigest()
+
+def main():
+    user = input("Username: ")
+    pwd = input("Password: ")
+
+    if check_user(user, pwd):
+        print("Login successful")
+    else:
+        print("Login failed")
+
+    command = input("Enter command: ")
+    run_command(command)
+
+    print("Password hash:", hash_password(pwd))
+
+
+if __name__ == "__main__":
+    main()
+[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mcat sast_lab_log.tx[27m[7mt[27m[A]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ cat sast_lab_log.txt
+[?2004lScript started on 2026-09-03 18:36:12+00:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="75" LINES="38"]
+[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mnano program.py[27mnano program.py
+[?2004l[?2004h[?1049h[22;0;0t[1;38r(B[m[4l[?7h[39;49m[?1h=[?1h=[?25l[39;49m(B[m[H[2J[36;32H(B[0;7m[ New File ](B[m[H(B[0;7m  GNU nano 7.2                     program.py                              [1;74H(B[m[37d(B[0;7m^G(B[m Help[37;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut[37;61H(B[0;7m^T(B[m Execute[38d(B[0;7m^X(B[m Exit[38;16H(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste[61G(B[0;7m^J(B[m Justify[2d[?12l[?25h[?25l[36d[K[1;47H(B[0;7m*[74G(B[m[3d(B[0;1m[36mdef[34m main[39m(B[m():[4;5Huser = input((B[0;1m[32m"Username: "[39m(B[m)[5;5Hpwd = input((B[0;1m[32m"Password: "[39m(B[m)[7;5H(B[0;1m[36mif[39m(B[m check_user(user, pwd):[8;9Hprint((B[0;1m[32m"Login successful"[39m(B[m)[9;5H(B[0;1m[36melse[39m(B[m:[10dprint((B[0;1m[32m"Login failed"[39m(B[m)[12;5Hcommand = input((B[0;1m[32m"Enter command: "[39m(B[m)[13;5Hrun_command(command)[15;5Hprint((B[0;1m[32m"Password hash:"[39m(B[m, hash_password(pwd))[18d(B[0;1m[36mif[39m(B[m __name__ == (B[0;1m[32m"__main__"[39m(B[m:[19;5Hmain()[?12l[?25h[?25l[37;16H   (B[0;7mM-D(B[m DOS Format    (B[0;7mM-A(B[m Append        (B[0;7mM-B(B[m Backup File[K[38;2H(B[0;7mC(B[m Cancel[16G   (B[0;7mM-M(B[m Mac Format    (B[0;7mM-P(B[m Prepend       (B[0;7m^T(B[m Browse[K[36d(B[0;7mFile Name to Write: program.py                                             [36;31H(B[m[?12l[?25h[?25l[1K (B[0;7m[ Writing... ](B[m[K[1;47H(B[0;7m [74G(B[m[36;29H(B[0;7m[ Wrote 38 lines ](B[m[37;16H(B[0;7m^O(B[m Write Out   (B[0;7m^W(B[m Where Is    (B[0;7m^K(B[m Cut         (B[0;7m^T(B[m Execute[38;2H(B[0;7mX(B[m Exit  [16G(B[0;7m^R(B[m Read File   (B[0;7m^\(B[m Replace     (B[0;7m^U(B[m Paste       (B[0;7m^J(B[m Justify[?12l[?25h[19;11H[?25l[36d[J[38d[?12l[?25h[38;1H[?1049l[23;0;0t[?1l>[?2004l[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mbandit -r program.p[27m[7my[27m[A]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ bandit -r program.py
+[?2004l[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.3
+[node_visitor]	INFO	Unable to find qualified name for module: program.py
+[95mRun started:2026-09-03 18:36:49.451484[0m
+[95m
+Test results:[0m
+[94m>> Issue: [B404:blacklist] Consider possible security implications associated with subprocess module.
+   Severity: Low   Confidence: High
+   Location: program.py:2
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_imports.html#b404-import-subprocess[0m
+1	import os
+2	import subprocess
+3	import hashlib
+
+--------------------------------------------------
+[91m>> Issue: [B605:start_process_with_a_shell] Starting a process with a shell, possible injection detected, security issue.
+   Severity: High   Confidence: High
+   Location: program.py:14
+   More Info: https://bandit.readthedocs.io/en/latest/plugins/b605_start_process_with_a_shell.html[0m
+13	def run_command(command):
+14	    os.system(command)
+15	
+
+--------------------------------------------------
+[91m>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+   Location: program.py:17
+   [?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mbandit -r program.p[27m[7my[27m[7m -f txt > bandit_report.txt[27m[A]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ bandit -r program.py -f txt > bandit_report.txt
+[?2004l[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.3
+[node_visitor]	INFO	Unable to find qualified name for module: program.py
+[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mcat bandit_report.t[27m[7mx[27m[7mt[27m[A]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ cat bandit_report.txt
+[?2004lRun started:2026-09-03 18:37:36.045033
+
+Test results:
+>> Issue: [B404:blacklist] Consider possible security implications associated with subprocess module.
+   Severity: Low   Confidence: High
+   Location: program.py:2
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_imports.html#b404-import-subprocess
+1	import os
+2	import subprocess
+3	import hashlib
+
+--------------------------------------------------
+>> Issue: [B605:start_process_with_a_shell] Starting a process with a shell, possible injection detected, security issue.
+   Severity: High   Confidence: High
+   Location: program.py:14
+   More Info: https://bandit.readthedocs.io/en/latest/plugins/b605_start_process_with_a_shell.html
+13	def run_command(command):
+14	    os.system(command)
+15	
+
+--------------------------------------------------
+>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+   Location: program.py:17
+   More Info: https://bandit.readthedocs.io/en/latest/plugins/b602_subprocess_popen_with_shell_equals_true.html
+16	def execute_command(command):
+17	    subprocess.call(command, shell=True)
+18	
+
+--------------------------------------------------
+>> Issue: [B303:blacklist] Use of insecure MD2, MD4, MD5, or SHA1 hash function.
+   Severity: Medium   Confidence: High
+   Location: program.py:20
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b303-md5
+19	def hash_password(password):
+20	    return hashlib.md5(password.encode()).hexdigest()
+21	
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: program.py:23
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+22	def main():
+23	    user = input("Username: ")
+24	    pwd = input("Password: ")
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: program.py:24
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+23	    user = input("Username: ")
+24	    pwd = input("Password: ")
+25	
+
+--------------------------------------------------
+>> Issue: [B322:blacklist] The input method in Python 2 will read from standard input, evaluate and run the resulting string as python source code. This is similar, though in many ways worse, then using eval. On Python 2, use raw_input instead, input is safe in Python 3.
+   Severity: High   Confidence: High
+   Location: program.py:31
+   More Info: https://bandit.readthedocs.io/en/latest/blacklists/blacklist_calls.html#b322-input
+30	
+31	    command = input("Enter command: ")
+32	    run_command(command)
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 27
+	Total lines skipped (#nosec): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0.0
+		Low: 1.0
+		Medium: 1.0
+		High: 5.0
+	Total issues (by confidence):
+		Undefined: 0.0
+		Low: 0.0
+		Medium: 0.0
+		High: 7.0
+Files skipped (0):
+[?2004h]0;kiran@ubuntu: ~/CryptoLabX_Group01/Assignment_02_Bandit[01;32mkiran@ubuntu[00m:[01;34m~/CryptoLabX_Group01/Assignment_02_Bandit[00m$ [7mexit[27mexit
+[?2004lexit
+
+Script done on 2026-09-03 18:37:51+00:00 [COMMAND_EXIT_CODE="0"]
