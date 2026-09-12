@@ -1,0 +1,6 @@
+
+In 1917, Vernam patented a perfectly secret encryption scheme now called the one-time pad. At the time Vernam proposed the scheme, there was no proof that it was perfectly secret; in fact, the notion of perfect secrecy was not yet defined. Approximately 25 years later, however, Shannon introduced the definition of perfect secrecy and demonstrated that the one-time pad satisfied that definition.
+
+In describing the scheme we let a XOR b denote the bitwise exclusive-or (XOR) of two equal-length binary strings a and b. (i.e., if a = a1 ... al and b = b1 ... bl are l-bit strings, then a XOR b is the l-bit string given by (a1 XOR b1) ... (al XOR bl).) In the one-time pad encryption scheme the key is a uniform string of the same length as the message, and the ciphertext is computed by simply XORing the key and the message; a formal definition is given as Construction 2.9. Before discussing security, we first verify correctness: For every key k and every message m it holds that Dec_k(Enc_k(m)) = k XOR k XOR m = m, and so the one-time pad constitutes a valid encryption scheme.
+
+One can easily prove perfect secrecy of the one-time pad using Lemma 2.5 because the ciphertext is uniformly distributed regardless of what message is encrypted. We give a direct proof based on the original definition.
