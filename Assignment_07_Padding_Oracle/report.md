@@ -1,152 +1,94 @@
-# ASSIGNMENT 07
-# PADDING ORACLE ATTACK
+# Assignment 07 - Padding Oracle Attack
 
-## Student Details
+## Group Number
+Group 01
 
-**Group No.:** 01  
-**Student ID:** 2024UCP1270  
-**Assignment No.:** 07  
-**Topic:** Padding Oracle Attack  
+## Objective
 
----
+To understand and demonstrate a Padding Oracle Attack on an
+AES-CBC encrypted message without knowing the AES encryption key.
 
-# 1. Aim
+## Technologies Used
 
-To understand and demonstrate how a Padding Oracle Attack can recover
-plaintext from an AES-CBC encrypted message without knowing the
-encryption key.
-
----
-
-# 2. Objectives
-
-1. Understand AES-CBC encryption.
-2. Understand PKCS#7 padding.
-3. Understand the role of a padding oracle.
-4. Implement a padding oracle attack.
-5. Recover plaintext without knowing the AES key.
-6. Count the number of oracle queries.
-7. Understand how to prevent padding oracle vulnerabilities.
-
----
-
-# 3. Software and Requirements
-
-- Ubuntu / Ubuntu WSL
 - Python 3
+- AES-CBC
+- PKCS#7
 - PyCryptodome
-- Git
+- Ubuntu
 - GitHub
 
----
+## Background
 
-# 4. Theory
+AES-CBC encrypts plaintext in blocks. PKCS#7 padding is added when
+the plaintext is smaller than a complete AES block.
 
-## 4.1 AES-CBC
+A padding oracle is a system that tells whether decrypted ciphertext
+contains valid or invalid padding.
 
-AES is a symmetric block cipher with a block size of 128 bits
-(16 bytes).
+## Attack
 
-In CBC mode, every plaintext block is XORed with the previous
-ciphertext block before encryption.
+The attack modifies the previous ciphertext block and sends the
+modified ciphertext to the oracle.
 
-For the first block, the IV is used.
+The attack starts from the rightmost byte and proceeds towards the
+left.
 
-Encryption:
+The attacker tries different byte values and uses the oracle's
+valid/invalid response to recover plaintext.
 
-C1 = AES_Encrypt(P1 XOR IV)
+The AES key is not used by the attack function.
 
-C2 = AES_Encrypt(P2 XOR C1)
+## Test Plaintext
 
-Decryption:
+Group01 Padding Oracle Attack Demonstration
 
-P1 = AES_Decrypt(C1) XOR IV
+## Result
 
-P2 = AES_Decrypt(C2) XOR C1
+The attack successfully recovered the original plaintext.
 
----
+Recovered Plaintext:
 
-## 4.2 PKCS#7 Padding
+Group01 Padding Oracle Attack Demonstration
 
-AES works on blocks of 16 bytes. If the plaintext is not a multiple
-of 16 bytes, PKCS#7 padding is added.
+Verification:
 
-For example, if 3 bytes of padding are required:
+SUCCESS - Plaintext recovered correctly.
 
-03 03 03
+The program also counts and displays the number of oracle queries.
 
-The last byte specifies the padding length.
+## Security Recommendation
 
----
+Padding oracle attacks can be prevented by:
 
-## 4.3 Padding Oracle
+1. Using authenticated encryption such as AES-GCM.
+2. Avoiding detailed padding error messages.
+3. Using generic error responses.
+4. Authenticating ciphertext before decryption where applicable.
 
-A padding oracle is a function that reveals whether decrypted
-ciphertext contains valid PKCS#7 padding.
+## Screenshots
 
-It returns:
+### 1. Environment Setup
 
-- True: valid padding
-- False: invalid padding
+[PASTE SCREENSHOT HERE]
 
-The attacker uses this information to recover plaintext.
+### 2. Attack Code
 
----
+[PASTE SCREENSHOT HERE]
 
-# 5. Padding Oracle Attack
+### 3. Program Output
 
-CBC decryption is:
+[PASTE SCREENSHOT HERE]
 
-P(i) = D(C(i)) XOR C(i-1)
+### 4. Git Status
 
-The attacker modifies the previous ciphertext block C(i-1).
+[PASTE SCREENSHOT HERE]
 
-This changes the plaintext of the target block.
+### 5. GitHub Repository
 
-The attacker tries different byte values and sends the modified
-ciphertext to the oracle.
+[PASTE SCREENSHOT HERE]
 
-When the oracle reports valid padding, the attacker obtains
-information about the plaintext byte.
+## Conclusion
 
-The process is performed from:
-
-RIGHT → LEFT
-
-until the entire plaintext block is recovered.
-
-The same process is repeated for all ciphertext blocks.
-
----
-
-# 6. Implementation
-
-The program was implemented in Python using PyCryptodome.
-
-The attack does not receive or access the AES key.
-
-The oracle internally performs AES-CBC decryption and only exposes
-whether the padding is valid.
-
-The program does not use a ready-made padding-oracle attack library.
-
----
-
-# 7. Terminal Commands
-
-```bash
-cd ~/CryptoLabX_Group01
-
-mkdir -p Assignment_07_Padding_Oracle
-
-cd Assignment_07_Padding_Oracle
-
-python3 -m venv venv
-
-source venv/bin/activate
-
-pip install pycryptodome
-
-gedit padding_oracle_attack.py
-
-python3 padding_oracle_attack.py
+The experiment demonstrated that improper handling of padding errors
+in AES-CBC can allow an attacker to recover plaintext without knowing
+the encryption key.

@@ -1,34 +1,26 @@
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
+
+
+# ============================================================
+# ASSIGNMENT 07 - PADDING ORACLE ATTACK
+# ============================================================
 
 BLOCK_SIZE = 16
 
-# ============================================================
-# ORACLE SETUP
-# ============================================================
-# IMPORTANT:
-# The attacker will NOT receive this key.
-# It is kept internally by the encryption/oracle.
-# ============================================================
 
+# ------------------------------------------------------------
+# Secret AES key
+# The attack function NEVER accesses this key.
+# ------------------------------------------------------------
 SECRET_KEY = get_random_bytes(16)
 
-SECRET_MESSAGE = (
-    b"Group01 ID2024UCP1270 Padding Oracle Attack Demonstration"
-)
 
-
-def pkcs7_pad(data):
-    padding_length = BLOCK_SIZE - (len(data) % BLOCK_SIZE)
-    return data + bytes([padding_length]) * padding_length
-
-
+# ------------------------------------------------------------
+# Encryption
+# ------------------------------------------------------------
 def encrypt_message(plaintext):
-    """
-    Encrypt plaintext using AES-CBC.
-    Returns IV + ciphertext.
-    """
-
     iv = get_random_bytes(BLOCK_SIZE)
 
     cipher = AES.new(
@@ -37,38 +29,43 @@ def encrypt_message(plaintext):
         iv
     )
 
-    padded = pkcs7_pad(plaintext)
+    ciphertext = cipher.encrypt(
+        pad(plaintext, BLOCK_SIZE)
+    )
 
-    ciphertext = cipher.encrypt(padded)
-
-    return iv + ciphertext
+    return iv, ciphertext
 
 
-# ============================================================
-# PADDING ORACLE
-# ============================================================
-
+# ------------------------------------------------------------
+# Padding Oracle
+#
+# Returns only:
+#     True  -> padding is valid
+#     False -> padding is invalid
+#
+# The attacker cannot see the key.
+# ------------------------------------------------------------
 oracle_queries = 0
 
 
-def padding_oracle(ciphertext):
-    """
-    Returns True if the decrypted ciphertext has valid PKCS#7
-    padding, otherwise False.
-
-    The AES key is hidden inside this function.
-    The attacker only gets True/False.
-    """
+def padding_oracle(packet):
 
     global oracle_queries
+
     oracle_queries += 1
 
-    if len(ciphertext) < 32:
+    # First 16 bytes = IV
+    # Remaining bytes = ciphertext
+    if len(packet) < 32:
+        return False
+
+    iv = packet[:BLOCK_SIZE]
+    ciphertext = packet[BLOCK_SIZE:]
+
+    if len(ciphertext) % BLOCK_SIZE != 0:
         return False
 
     try:
-        iv = ciphertext[:BLOCK_SIZE]
-        encrypted_data = ciphertext[BLOCK_SIZE:]
 
         cipher = AES.new(
             SECRET_KEY,
@@ -76,194 +73,172 @@ def padding_oracle(ciphertext):
             iv
         )
 
-        plaintext = cipher.decrypt(encrypted_data)
+        plaintext = cipher.decrypt(ciphertext)
 
         # Check PKCS#7 padding
-        padding_length = plaintext[-1]
-
-        if padding_length < 1 or padding_length > BLOCK_SIZE:
-            return False
-
-        padding = plaintext[-padding_length:]
-
-        if padding != bytes([padding_length]) * padding_length:
-            return False
+        unpad(plaintext, BLOCK_SIZE)
 
         return True
 
-    except Exception:
+    except ValueError:
+
         return False
 
 
-# ============================================================
-# PADDING ORACLE ATTACK
-# ============================================================
-
-def recover_block(previous_block, target_block):
-    """
-    Recover one plaintext block without knowing the AES key.
-
-    previous_block = C(i-1)
-    target_block   = C(i)
-
-    CBC decryption:
-
-        P(i) = D(C(i)) XOR C(i-1)
-
-    We modify C(i-1) and use the padding oracle
-    to recover P(i) from right to left.
-    """
-
-    intermediate = [0] * BLOCK_SIZE
-    recovered = [0] * BLOCK_SIZE
-
-    # Work from last byte to first byte
-    for position in range(BLOCK_SIZE - 1, -1, -1):
-
-        padding_value = BLOCK_SIZE - position
-
-        # Create modified previous block
-        modified_previous = bytearray(previous_block)
-
-        # Force already recovered bytes to have desired padding
-        for j in range(position + 1, BLOCK_SIZE):
-            modified_previous[j] = (
-                previous_block[j]
-                ^ intermediate[j]
-                ^ padding_value
-            )
-
-        found = False
-
-        # Try all possible byte values
-        for guess in range(256):
-
-            modified_previous[position] = (
-                previous_block[position]
-                ^ guess
-                ^ padding_value
-            )
-
-            test_ciphertext = (
-                bytes(modified_previous) + target_block
-            )
-
-            if padding_oracle(test_ciphertext):
-
-                # Extra verification for the last byte
-                # to avoid false positives caused by existing padding.
-                if position == BLOCK_SIZE - 1:
-
-                    verification = bytearray(modified_previous)
-
-                    verification[position - 1] ^= 1
-
-                    if not padding_oracle(
-                        bytes(verification) + target_block
-                    ):
-                        continue
-
-                intermediate[position] = guess
-
-                recovered[position] = (
-                    guess ^ previous_block[position]
-                )
-
-                found = True
-                break
-
-        if not found:
-            raise RuntimeError(
-                f"Could not recover byte at position {position}"
-            )
-
-    return bytes(recovered)
-
-
-def remove_pkcs7_padding(data):
-    """
-    Remove PKCS#7 padding after the complete plaintext
-    has been recovered.
-    """
-
-    padding_length = data[-1]
-
-    if padding_length < 1 or padding_length > BLOCK_SIZE:
-        raise ValueError("Invalid PKCS#7 padding")
-
-    if data[-padding_length:] != bytes([padding_length]) * padding_length:
-        raise ValueError("Invalid PKCS#7 padding")
-
-    return data[:-padding_length]
-
-
-def padding_oracle_attack(full_ciphertext):
-    """
-    Recover complete plaintext.
-
-    The attacker knows:
-        IV
-        ciphertext
-        padding oracle
-
-    The attacker does NOT know:
-        AES key
-    """
-
-    iv = full_ciphertext[:BLOCK_SIZE]
-    ciphertext = full_ciphertext[BLOCK_SIZE:]
+# ------------------------------------------------------------
+# Padding Oracle Attack
+#
+# IMPORTANT:
+# SECRET_KEY is NOT used here.
+# ------------------------------------------------------------
+def padding_oracle_attack(ciphertext, iv, oracle):
 
     blocks = [
-        ciphertext[i:i + BLOCK_SIZE]
-        for i in range(0, len(ciphertext), BLOCK_SIZE)
+        iv
     ]
 
-    recovered_plaintext = b""
+    for i in range(0, len(ciphertext), BLOCK_SIZE):
+        blocks.append(
+            ciphertext[i:i + BLOCK_SIZE]
+        )
 
-    previous_block = iv
+    recovered_plaintext = bytearray()
 
-    for block_number, target_block in enumerate(blocks, start=1):
+    # Process every ciphertext block
+    for block_number in range(1, len(blocks)):
+
+        previous_block = blocks[block_number - 1]
+        current_block = blocks[block_number]
+
+        # Intermediate value:
+        #
+        # I = AES_DECRYPT(C)
+        #
+        intermediate = bytearray(BLOCK_SIZE)
+
+        crafted_block = bytearray(previous_block)
+
+        # Recover bytes from right to left
+        for padding_value in range(1, BLOCK_SIZE + 1):
+
+            index = BLOCK_SIZE - padding_value
+
+            # Make already recovered bytes produce
+            # the desired padding value.
+            for j in range(index + 1, BLOCK_SIZE):
+
+                crafted_block[j] = (
+                    intermediate[j] ^ padding_value
+                )
+
+            found = False
+
+            # Try all possible byte values
+            for guess in range(256):
+
+                crafted_block[index] = guess
+
+                test_packet = (
+                    bytes(crafted_block)
+                    + current_block
+                )
+
+                if oracle(test_packet):
+
+                    # Extra check for padding = 1
+                    # to reduce false positives.
+                    if padding_value == 1 and index > 0:
+
+                        verification_block = bytearray(
+                            crafted_block
+                        )
+
+                        verification_block[index - 1] ^= 1
+
+                        verification_packet = (
+                            bytes(verification_block)
+                            + current_block
+                        )
+
+                        if not oracle(
+                            verification_packet
+                        ):
+                            continue
+
+                    intermediate[index] = (
+                        guess ^ padding_value
+                    )
+
+                    found = True
+                    break
+
+            if not found:
+
+                raise RuntimeError(
+                    "Could not recover a plaintext byte."
+                )
+
+        # P = I XOR previous ciphertext block
+        plaintext_block = bytes(
+            intermediate[i] ^ previous_block[i]
+            for i in range(BLOCK_SIZE)
+        )
+
+        recovered_plaintext.extend(
+            plaintext_block
+        )
 
         print(
-            f"Recovering plaintext block {block_number}/{len(blocks)}..."
+            f"Recovered block {block_number}: "
+            f"{plaintext_block}"
         )
 
-        plaintext_block = recover_block(
-            previous_block,
-            target_block
+    # Remove final PKCS#7 padding
+    padding_length = recovered_plaintext[-1]
+
+    if not (
+        1 <= padding_length <= BLOCK_SIZE
+    ):
+        raise RuntimeError(
+            "Invalid recovered padding."
         )
 
-        recovered_plaintext += plaintext_block
+    if recovered_plaintext[
+        -padding_length:
+    ] != bytes([padding_length]) * padding_length:
 
-        previous_block = target_block
+        raise RuntimeError(
+            "Recovered plaintext has invalid padding."
+        )
 
-    return remove_pkcs7_padding(recovered_plaintext)
+    return bytes(
+        recovered_plaintext[:-padding_length]
+    )
 
 
-# ============================================================
-# MAIN PROGRAM
-# ============================================================
-
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
 def main():
+
+    plaintext = (
+        b"Group01 Padding Oracle Attack Demonstration"
+    )
 
     print("=" * 70)
     print("ASSIGNMENT 07 - PADDING ORACLE ATTACK")
     print("=" * 70)
 
-    print("\nGroup No. : 01")
-    print("Student ID: 2024UCP1270")
+    print("\nOriginal Plaintext:")
+    print(plaintext.decode())
 
     # --------------------------------------------------------
-    # Encrypt the secret message.
-    #
-    # In a real attack, the attacker would simply receive
-    # this IV + ciphertext from the vulnerable application.
+    # Encryption
     # --------------------------------------------------------
 
-    encrypted_message = encrypt_message(SECRET_MESSAGE)
-
-    iv = encrypted_message[:BLOCK_SIZE]
-    ciphertext = encrypted_message[BLOCK_SIZE:]
+    iv, ciphertext = encrypt_message(
+        plaintext
+    )
 
     print("\nIV:")
     print(iv.hex())
@@ -271,32 +246,54 @@ def main():
     print("\nCiphertext:")
     print(ciphertext.hex())
 
-    print("\nCiphertext length:", len(ciphertext), "bytes")
+    print("\nCiphertext Length:")
+    print(len(ciphertext), "bytes")
 
-    # Reset oracle query counter before attack
+    # --------------------------------------------------------
+    # Reset oracle counter
+    # --------------------------------------------------------
+
     global oracle_queries
     oracle_queries = 0
 
-    print("\nStarting Padding Oracle Attack...")
-    print("AES key is NOT provided to the attacker.")
+    # --------------------------------------------------------
+    # Attack
+    #
+    # Notice:
+    # SECRET_KEY is NOT passed to this function.
+    # --------------------------------------------------------
 
-    recovered = padding_oracle_attack(encrypted_message)
+    recovered = padding_oracle_attack(
+        ciphertext,
+        iv,
+        padding_oracle
+    )
+
+    # --------------------------------------------------------
+    # Results
+    # --------------------------------------------------------
 
     print("\n" + "=" * 70)
-    print("ATTACK COMPLETED")
+    print("ATTACK RESULT")
     print("=" * 70)
 
-    print("\nRecovered plaintext:")
+    print("\nRecovered Plaintext:")
     print(recovered.decode())
 
-    print("\nOracle queries required:")
+    print("\nOracle Queries:")
     print(oracle_queries)
 
     print("\nVerification:")
-    print("Recovered plaintext matches original:",
-          recovered == SECRET_MESSAGE)
 
-    print("\nThe AES key was never used by the attack function.")
+    if recovered == plaintext:
+        print("SUCCESS - Plaintext recovered correctly.")
+    else:
+        print("FAILED - Plaintext does not match.")
+
+    print("\nKey Used During Attack:")
+    print("NO - Attack function never accesses SECRET_KEY.")
+
+    print("\n" + "=" * 70)
 
 
 if __name__ == "__main__":
