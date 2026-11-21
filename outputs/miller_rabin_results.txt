@@ -1,0 +1,40 @@
+CRYPTOLABX - MILLER-RABIN PRIME GENERATION
+============================================================
+
+Experimental Results
+------------------------------------------------------------
+Assigned Bit Length: 512
+Generated Prime Candidate: 8989697272255775556081507787218669863253607948722878326531177245534189822582147041936438255310417133750193071371294122644091782208974635462521395365151751
+Actual Bit Length: 512
+Number of Candidates Tested: 6
+Number of Miller-Rabin Rounds: 20
+Total Execution Time: 0.013883 seconds
+
+Miller-Rabin Bases
+------------------------------------------------------------
+Base 2: PASS
+Base 3: PASS
+Base 5: PASS
+Base 7: PASS
+Base 11: PASS
+Base 13: PASS
+Base 17: PASS
+Base 19: PASS
+Base 23: PASS
+Base 29: PASS
+Base 31: PASS
+Base 37: PASS
+Base 41: PASS
+Base 43: PASS
+Base 47: PASS
+Base 53: PASS
+Base 59: PASS
+Base 61: PASS
+Base 67: PASS
+Base 71: PASS
+
+Verification
+------------------------------------------------------------
+Bit Length Verification: PASS
+Miller-Rabin Verification: PASS
+Independent SymPy Verification: PASS
